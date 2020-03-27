@@ -21,7 +21,9 @@ typedef struct _ReturnRunner{
 typedef struct _ReturnRunProcess{
 
 	int returncode;
-	char* output;
+	char* value;
+	char* program_output;
+	char* program_error;
 
 }ReturnRunProcess;
 
@@ -49,14 +51,17 @@ typedef struct _ProgramRunner{
 	char* program;
 
 	//Subprocess run
-	ReturnRunProcess (*run_process)(Runner, char*, char*);
+	ReturnRunProcess (*run_process)(struct _ProgramRunner, char*);
 
-	ReturnRunProcess (*run)(Runner, char*);
+	ReturnRunProcess (*run)(struct _ProgramRunner, char*);
 
 }ProgramRunner;
 
 ReturnRunner run_Runner(Runner rnr, char* inp);
 ReturnRunner run_PrintRunner(PrintRunner rnr, char* inp);
+
+ReturnRunProcess run_process_Program(ProgramRunner rnr, char* inp);
+ReturnRunProcess run_Program(ProgramRunner rnr, char* inp);
 
 void file_fuzzer(char* file_name);
 
@@ -79,27 +84,83 @@ int main(int argv, char** argc){
 	
 	//file_fuzzer("input.txt");
 
+	
 	Runner runner_base = {"PASS", "FAIL", "UNRESOLVED", run_Runner};
-
+	/*
 	ReturnRunner rur = runner_base.run(runner_base, fuzzer(max_, (int)'a', 26));
 	printf("%s === %s\n", rur.inp, rur.value);
 
 	PrintRunner runner_print = {runner_base, run_PrintRunner};
 	ReturnRunner rur_p = runner_print.run(runner_print, "Some Input");
+	*/
+	ProgramRunner runner_process = {runner_base, "echo", run_process_Program, run_Program};
+	ReturnRunProcess rur_rp = runner_process.run(runner_process, "hello world");
 
+	printf("%s %s\n", rur_rp.value, rur_rp.program_output);
 }
-/*
-ReturnRunProcess (*run_process)(Runner rnr, char* inp, char* prg){
+
+ReturnRunProcess run_process_Program(ProgramRunner rnr, char* inp){
 	
 	ReturnRunProcess rrp;
-	execve(argv[1],(char* const*)cmd_line, __environ);
-	//rrp.returncode
-	//rrp.output
-	
-	char* buffer
+	FILE* fp;
+	char* cmd_line = malloc(sizeof(char)*(strlen(inp)+strlen(rnr.program)+21));
+
+	sprintf(cmd_line, "%s %s > _program_stdout_", rnr.program, inp);
+
+	rrp.returncode = system(cmd_line);
+	free(cmd_line);
+
+	cmd_line = malloc(sizeof(char)*(strlen(inp)+strlen(rnr.program)+21));
+	sprintf(cmd_line, "%s %s 2> _program_stderr_", rnr.program, inp);
+
+	rrp.returncode = system(cmd_line);
+	free(cmd_line);
+
+	char program_read_[BUFF_SIZE*10];
+	if(0<(fp = fopen("_program_stdout_", "r"))){
+		while(fgets(program_read_, sizeof(program_read_), fp)){
+			//printf("program stdout %s\n", program_read_);
+		}
+		fclose(fp);
+	}
+	else{
+		printf("file open error");
+		exit(1);
+	}
+	char program_read_error[BUFF_SIZE*10];
+
+	if(0<(fp = fopen("_program_stderr_", "r"))){
+		while(fgets(program_read_error, sizeof(program_read_error), fp)){
+			//printf("program stderr %s\n", program_read_error);
+		}
+		fclose(fp);
+	}
+	else{
+		printf("file open error");
+		exit(1);
+	}
+
+	rrp.program_output = program_read_;
+	rrp.program_error = program_read_error; 
 
 	return rrp;
-}*/
+}
+
+ReturnRunProcess run_Program(ProgramRunner rnr, char* inp){
+	ReturnRunProcess rrp = rnr.run_process(rnr, inp);
+	ReturnRunProcess rr;
+	if(rrp.returncode == 0)
+		rr.value = rnr.prgRnr.pass;
+	else if(rrp.returncode < 0)
+		rr.value = rnr.prgRnr.fail;
+	else 
+		rr.value = rnr.prgRnr.unresolved;
+
+	rr.program_output = rrp.program_output;
+	rr.program_error = rrp.program_error;
+
+	return rr;
+}
 
 ReturnRunner run_Runner(Runner rnr, char* inp){
 	ReturnRunner rr;

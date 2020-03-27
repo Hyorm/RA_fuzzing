@@ -1,6 +1,0 @@
-fuzzer.c:27:30: error: expected ‘)’ before ‘char’
-  ReturnRunner (*run)(Runner, char*);//run_Runner
-                              ^
-fuzzer.c:29:1: warning: no semicolon at end of struct or union
- }Runner;//{"PASS", "FAIL", "UNRESOLVED"};
- ^

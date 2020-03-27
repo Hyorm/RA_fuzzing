@@ -18,6 +18,13 @@ typedef struct _ReturnRunner{
 
 }ReturnRunner;
 
+typedef struct _ReturnRunProcess{
+
+	int returncode;
+	char* output;
+
+}ReturnRunProcess;
+
 typedef struct _Runner{
 	char* pass;// = "PASS";
 	char* fail;// = "FAIL";
@@ -29,21 +36,27 @@ typedef struct _Runner{
 
 typedef struct _PrintRunner{
 
-	ReturnRunner (*run)(Runner, char*);
+	Runner prRnr;
+
+	ReturnRunner (*run)(struct _PrintRunner, char*);
 
 }PrintRunner;
-/*
+
 typedef struct _ProgramRunner{
 	
-	//Subprocess run
+	Runner prgRnr;
+	
+	char* program;
 
+	//Subprocess run
+	ReturnRunProcess (*run_process)(Runner, char*, char*);
+
+	ReturnRunProcess (*run)(Runner, char*);
 
 }ProgramRunner;
-*/
-ReturnRunner run_Runner(Runner rnr, char* inp);
-ReturnRunner run_PrintRunner(Runner rnr, char* inp);
 
-ReturnRunner rr;
+ReturnRunner run_Runner(Runner rnr, char* inp);
+ReturnRunner run_PrintRunner(PrintRunner rnr, char* inp);
 
 void file_fuzzer(char* file_name);
 
@@ -71,13 +84,25 @@ int main(int argv, char** argc){
 	ReturnRunner rur = runner_base.run(runner_base, fuzzer(max_, (int)'a', 26));
 	printf("%s === %s\n", rur.inp, rur.value);
 
-	Runner runner_print = {"PASS", "FAIL", "UNRESOLVED", run_PrintRunner};
+	PrintRunner runner_print = {runner_base, run_PrintRunner};
 	ReturnRunner rur_p = runner_print.run(runner_print, "Some Input");
 
 }
+/*
+ReturnRunProcess (*run_process)(Runner rnr, char* inp, char* prg){
+	
+	ReturnRunProcess rrp;
+	execve(argv[1],(char* const*)cmd_line, __environ);
+	//rrp.returncode
+	//rrp.output
+	
+	char* buffer
+
+	return rrp;
+}*/
 
 ReturnRunner run_Runner(Runner rnr, char* inp){
-	
+	ReturnRunner rr;
 	rr.inp = inp;
 	rr.value = rnr.unresolved;
 
@@ -85,11 +110,11 @@ ReturnRunner run_Runner(Runner rnr, char* inp){
 
 }
 
-ReturnRunner run_PrintRunner(Runner rnr, char* inp){
-
+ReturnRunner run_PrintRunner(PrintRunner rnr, char* inp){
+	ReturnRunner rr;
 	rr.inp = inp;
 	printf("%s\n", rr.inp);
-	rr.value = rnr.unresolved;
+	rr.value = rnr.prRnr.unresolved;
 
 	return rr;
 }

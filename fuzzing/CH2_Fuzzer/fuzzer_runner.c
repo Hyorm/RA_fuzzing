@@ -58,9 +58,11 @@ typedef struct _ProgramRunner{
 }ProgramRunner;
 
 typedef struct _Fuzzer{
-	
+	/*
 	Runner fzrRunner;
-	
+	PrintRunner prtRunner;
+	ProgramRunner prgRnr;
+	*/
 	char* inp;
 
 	char* (*fuzz)(struct _Fuzzer);
@@ -82,7 +84,13 @@ typedef struct _RandomFuzzer{
 	int char_range;
 
 	ReturnRunner (*run)(struct _RandomFuzzer, Runner);
-	ReturnRunner* (*runs)(struct _RandomFuzzer, /*PrintRunner*/Runner, int);
+	ReturnRunner (*run_print)(struct _RandomFuzzer, PrintRunner);
+	ReturnRunProcess (*run_program)(struct _RandomFuzzer, ProgramRunner);
+	
+	ReturnRunner* (*runs)(struct _RandomFuzzer, Runner, int);
+	ReturnRunner* (*runs_print)(struct _RandomFuzzer, PrintRunner, int);
+	ReturnRunProcess* (*runs_program)(struct _RandomFuzzer, ProgramRunner, int);
+
 	struct _RandomFuzzer (*__init__)(struct _RandomFuzzer, int, int, int, int);
 	char* (*fuzz)(struct _RandomFuzzer);
 
@@ -100,7 +108,13 @@ ReturnRunner run_Fuzzer(Fuzzer fzr, Runner rnr);
 ReturnRunner* runs_Fuzzer(Fuzzer fzr, /*Print*/Runner pr, int trials);
 
 ReturnRunner run_RandomFuzzer(RandomFuzzer rf, Runner rnr);
-ReturnRunner* runs_RandomFuzzer(RandomFuzzer rf, /*Print*/Runner pr, int trials); 
+ReturnRunner run_print_RandomFuzzer(RandomFuzzer rf, PrintRunner rnr); 
+ReturnRunProcess run_program_RandomFuzzer(RandomFuzzer rf, ProgramRunner rnr); 
+
+ReturnRunner* runs_RandomFuzzer(RandomFuzzer rf, Runner pr, int trials);
+ReturnRunner* runs_print_RandomFuzzer(RandomFuzzer rf, PrintRunner pr, int trials);
+ReturnRunProcess* runs_program_RandomFuzzer(RandomFuzzer rf, ProgramRunner pr, int trials);
+
 RandomFuzzer __init__RandomFuzzer(RandomFuzzer rf, int min_length, int max_length, int char_start, int char_range);
 char* fuzz_RandomFuzzer(RandomFuzzer rf);
 
@@ -110,30 +124,43 @@ int main(int argv, char** argc){
 
 	Runner runner_base = {"PASS", "FAIL", "UNRESOLVED", run_Runner};
 
-	ReturnRunner rur = runner_base.run(runner_base, "Some Input");
-	printf("%s === %s\n", rur.inp, rur.value);
+	//ReturnRunner rur = runner_base.run(runner_base, "Some Input");
+	//printf("%s === %s\n", rur.inp, rur.value);
 
 	PrintRunner runner_print = {runner_base, run_PrintRunner};
-	ReturnRunner rur_p = runner_print.run(runner_print, "Some Input");
+	//ReturnRunner rur_p = runner_print.run(runner_print, "Some Input");
 
 	ProgramRunner runner_process = {runner_base, "echo", run_process_Program, run_Program};
-	ReturnRunProcess rur_rp = runner_process.run(runner_process, "hello world");
+	//ReturnRunProcess rur_rp = runner_process.run(runner_process, "hello world");
 
-	printf("%s %s\n", rur_rp.value, rur_rp.program_output);
+	//printf("%s %s\n", rur_rp.value, rur_rp.program_output);
 
-	Fuzzer fzr = {runner_base, "",fuzz_Fuzzer, run_Fuzzer, runs_Fuzzer};
+	Fuzzer fzr = {"",fuzz_Fuzzer, run_Fuzzer, runs_Fuzzer};
 
-	RandomFuzzer rfzr = {fzr, 10, 100, 32, 32, run_RandomFuzzer, runs_RandomFuzzer,__init__RandomFuzzer, fuzz_RandomFuzzer};
-	for(int i = 0; i < 10; i++){
-		rfzr = rfzr.__init__(rfzr, 20, 20, 32, 32);
-		printf("out %s\n", rfzr.fuzz(rfzr));
-	}
-	printf("out run %s\n", rfzr.run(rfzr, rfzr.fzr.fzrRunner).inp);
-	rfzr.runs(rfzr, rfzr.fzr.fzrRunner, 10);
+	RandomFuzzer rfzr = {fzr, 10, 100, 32, 32, run_RandomFuzzer, run_print_RandomFuzzer, run_program_RandomFuzzer, runs_RandomFuzzer, runs_print_RandomFuzzer, runs_program_RandomFuzzer,__init__RandomFuzzer, fuzz_RandomFuzzer};
+	
+	//rfzr = rfzr.__init__(rfzr, 20, 20, 32, 32);
+	//for(int i = 0; i < 10; i++){
+	//	printf("out %s\n", rfzr.fuzz(rfzr));
+	//}
+	printf("program  %s\n", rfzr.run_program(rfzr, runner_process).program_output);
+	rfzr.runs_print(rfzr, runner_print, 10);
 }
 
 ReturnRunner run_RandomFuzzer(RandomFuzzer rf, Runner rnr){
 	
+	return rnr.run(rnr, rf.fuzz(rf));
+
+}
+
+ReturnRunner run_print_RandomFuzzer(RandomFuzzer rf, PrintRunner rnr){
+
+	return rnr.run(rnr, rf.fuzz(rf));
+
+}
+
+ReturnRunProcess run_program_RandomFuzzer(RandomFuzzer rf, ProgramRunner rnr){
+
 	return rnr.run(rnr, rf.fuzz(rf));
 
 }
@@ -144,10 +171,32 @@ ReturnRunner* runs_RandomFuzzer(RandomFuzzer rf, Runner rnr, int trials){
 
 	for(int i = 0;i < trials;i++){
 		outcomes[i] = rf.run(rf, rnr);
-		//printf("outcomes: %s\n", outcomes[i].value);
+		printf("runs_RandomFuzzer: %s\n", outcomes[i].inp);
 	}
 
 	return outcomes;
+}
+
+ReturnRunner* runs_print_RandomFuzzer(RandomFuzzer rf, PrintRunner pr, int trials){
+
+	ReturnRunner outcomes[trials]; 
+
+	for(int i = 0;i < trials;i++){
+		outcomes[i] = rf.run_print(rf, pr);
+	}
+	return outcomes;
+
+}
+
+ReturnRunProcess* runs_program_RandomFuzzer(RandomFuzzer rf, ProgramRunner pr, int trials){
+
+	ReturnRunProcess outcomes[trials];
+
+	for(int i = 0;i < trials;i++){
+		outcomes[i] = rf.run_program(rf, pr);
+	}
+	return outcomes;
+
 }
 
 RandomFuzzer __init__RandomFuzzer(RandomFuzzer rf, int min_length, int max_length, int char_start, int char_range){
@@ -175,6 +224,7 @@ char* fuzz_RandomFuzzer(RandomFuzzer rf){
 		char new_out= rand()%rf.char_range+rf.char_start;
 		out[i] = new_out;
 	}
+	printf("fuzz: %s\n", out);
 	rf.fzr.inp = out;
 
 	return out;
@@ -230,10 +280,11 @@ ReturnRunProcess run_process_Program(ProgramRunner prnr, char* inp){
 			//printf("program stdout %s\n", program_read_);
 		}
 		fclose(fp);
+		rrp.program_output = program_read_;
 	}
 	else{
 		printf("file open error\n");
-		exit(1);
+		rrp.program_output = "file open error";
 	}
 	char program_read_error[BUFF_SIZE*10];
 
@@ -242,14 +293,12 @@ ReturnRunProcess run_process_Program(ProgramRunner prnr, char* inp){
 			//printf("program stderr %s\n", program_read_error);
 		}
 		fclose(fp);
+		rrp.program_error = program_read_error;
 	}
 	else{
 		printf("file open error\n");
-		exit(1);
+		rrp.program_error = "file open error";
 	}
-
-	rrp.program_output = program_read_;
-	rrp.program_error = program_read_error; 
 
 	return rrp;
 }
@@ -273,7 +322,6 @@ ReturnRunProcess run_Program(ProgramRunner prnr, char* inp){
 ReturnRunner run_Runner(Runner rnr, char* inp){
 	ReturnRunner rr;
 	rr.inp = inp;
-	printf("inp %s\n", rr.inp);
 	rr.value = rnr.unresolved;
 
 	return rr;

@@ -47,7 +47,6 @@ void file_fuzzer(char* file_name);
 
 char* fuzzer(int max_length, int char_start, int char_range);
 
-char* buffer;
 char* fuzzer_output;
 
 char fuzzer_read_input[BUFF_SIZE];
@@ -70,7 +69,6 @@ int main(int argv, char** argc){
 		if(url.urlParse(url, mutate("http://www.google.com/search?q=fuzzing")))
 			count++;//printf("Success\n");
 
-		free(buffer);
 	}
 	printf("success count: %d / 1000\n", count);
 	
@@ -263,7 +261,6 @@ void file_fuzzer(char* file_name){
 	if(0<(fp = fopen(file_name, "w"))){
 		fuzzer_output = fuzzer(max_, (int)'a', 26);
 		//printf("fuzzer_output %s\n", fuzzer_output);
-		free(buffer);
 		fprintf(fp, fuzzer_output,strlen(fuzzer_output));
 		fclose(fp);
 	}
@@ -284,7 +281,6 @@ void file_fuzzer(char* file_name){
 
 	assert(strcmp(fuzzer_output, fuzzer_read_input)==0);
 
-	free(buffer);
 	free(fuzzer_output);
 }
 

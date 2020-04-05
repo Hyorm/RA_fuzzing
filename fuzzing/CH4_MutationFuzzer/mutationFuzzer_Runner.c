@@ -10,7 +10,7 @@
 #include<unistd.h>
 
 #define BUFF_SIZE 1024
-//test
+/*//test
 typedef struct _URL{
 
 	char* scheme;
@@ -38,7 +38,8 @@ int isParams_URL(URL url, char* snp);
 int isQuery_URL(URL url, char* snp);
 int isFragment_URL(URL url, char* snp);
 
-//test_end
+bool http_program(char* url);
+//test_end*/
 
 typedef struct _ReturnRunner{
 
@@ -85,6 +86,14 @@ typedef struct _ProgramRunner{
 	ReturnRunProcess (*run)(struct _ProgramRunner, char*);
 
 }ProgramRunner;
+
+typedef struct _FunctionRunner{
+
+	Runner fRnr;
+
+	char* function;
+
+}FunctionRunner;
 
 typedef struct _Fuzzer{
 	/*
@@ -177,8 +186,6 @@ char* mutate(char* seed);
 char* delete_random_character(char* seed);
 char* insert_random_character(char* seed);
 char* flip_random_character(char* seed);
-
-char* buffer;
 
 int main(int argv, char** argc){
 
@@ -419,7 +426,7 @@ char* flip_random_character(char* seed){
 	
 
 }
-//test
+/*//test
 int urlParse_URL(URL url, char* snp){
 
 	int end;
@@ -484,7 +491,7 @@ int isFragment_URL(URL url, char* snp){
 	return 0;
 
 }
-//test end
+//test end*/
 ReturnRunner run_RandomFuzzer(RandomFuzzer rf, Runner rnr){
 	
 	return rnr.run(rnr, rf.fuzz(rf));

@@ -19,49 +19,34 @@ greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, i
 
         gettimeofday(&now, NULL);
         srand((unsigned int)now.tv_usec);
-	Coverage run_cov;
+
         int mutate_size = rand()%max_mtt+min_mtt;
 	Input* input = malloc(sizeof(input)*(seed_size+mutate_size));
-	int size = 0;
-	
 	for(int i = 0; i < seed_size+mutate_size; i++){
 		input[i].input = malloc(sizeof(char)*MAX_SIZE);
-	}
-	for(int i = 0; i < seed_size+mutate_size; i++){	
-		char* tmp_str;
 		if(i<seed_size)
-			tmp_str = seed[i];
+			memcpy(input[i].input, seed[i], strlen(seed[i])-1);
 		else{
 			int pop = 0;
-			if(size > 1)pop = rand()%(size-1);
+			if(i > 1)pop = rand()%(i-1);
+			char* candidate;
 			while(1){
-				tmp_str = gf.fuzz(input[pop].input);
-				if(strlen(tmp_str)>2)break;
+				candidate = gf.fuzz(input[pop].input);
+				if(strlen(candidate)>2)break;
 			}
+			memcpy(input[i].input, candidate, strlen(candidate)-1);
 		}
-		if(i == 0){
-			run_cov = getCoverage(run_cov, filename, gf.fuzz(tmp_str));
-			strcpy(input[size].input, tmp_str);
-			input[size++].value =  run_cov.cov_line.value;
-			
-			printf("%dcoverage: %2.2f\n", i,run_cov.coverage * 100);
-		}
-		else{
-			Coverage tmp_cov;
-			tmp_cov = allCoverage(tmp_cov, filename, gf.fuzz(tmp_str));
-
-			CmpCoverage cmpCov;
-			cmpCov = getCmpCoverage(run_cov, tmp_cov);
-			if(cmpCov.onlyb.idx != 0){
-				strcpy(input[size].input, tmp_str);
-				input[size++].value = tmp_cov.cov_line.value;
-				run_cov = tmp_cov;
-				printf("%dcoverage: %2.2f\n", i,run_cov.coverage * 100);
-			}
-		}
-		
 	}
-	Population tmp ={input, size, run_cov}; 	
+	Coverage run_cov;
+
+	run_cov = getCoverage(run_cov, filename, gf.fuzz(input[0].input));
+	for(int i = 1; i < seed_size+mutate_size; i++){
+		
+		run_cov = allCoverage(run_cov, filename, gf.fuzz(input[i].input));
+		input[i].value = run_cov.cov_line.value;
+		printf("coverage: %2.2f\n", run_cov.coverage * 100);
+	}
+	Population tmp ={input, seed_size, run_cov}; 	
 	gr.pop = tmp;
 	return gr;
 }
@@ -224,7 +209,7 @@ CmpCoverage getCmpCoverage(Coverage a, Coverage b){
 	        }
         	else comp.onlyb.line[comp.onlyb.idx++] = b.cov_line.line[i];
         }
-	/*printf("size : %d comp intersecion: \n", comp.intersecion.idx);
+	printf("size : %d comp intersecion: \n", comp.intersecion.idx);
         for(int i = 0; i < comp.intersecion.idx; i++)
                 printf("%d ", comp.intersecion.line[i]);
         printf("\n");
@@ -239,7 +224,7 @@ CmpCoverage getCmpCoverage(Coverage a, Coverage b){
                 printf("%d ", comp.onlyb.line[i]);
 
         printf("\n");
-	*/
+
         return comp;	
 
 }

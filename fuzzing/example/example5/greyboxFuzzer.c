@@ -37,7 +37,8 @@ char* mutate(char* seed){
                         rst = delete_random_character(seed);
                         //printf("delete %s\n", rst);
                         break;
-                case 2 :                                                                                               rst = insert_random_character(seed);
+                case 2 :
+			rst = insert_random_character(seed);
                         //printf("insert %s\n", rst);
                         break;
                 case 3 :
@@ -97,7 +98,7 @@ char* delete_random_character(char* seed){
 char* insert_random_character(char* seed){
 
 	struct timeval now;
-
+	char dict[] = {'s','w', 'd', 'a' };
         int pos = 0;
 
         gettimeofday(&now, NULL);
@@ -106,11 +107,12 @@ char* insert_random_character(char* seed){
         pos = rand()%(strlen(seed));
   
 	char* out = malloc(sizeof(char)*strlen(seed)+1);
+	//DictMutator
 
         for(int i = 0; i < pos ; i++)
                 out[i] = seed[i];
 
-        out[pos] = (char)rand()%127 + 32;
+        out[pos] = dict[rand()%3];
 
         for(int i = pos+1; i < strlen(seed)+1 ; i++)
                 out[i] = seed[i-1];

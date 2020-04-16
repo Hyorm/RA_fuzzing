@@ -37,15 +37,17 @@ greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, i
 			int pop = 0;
 
 			if(size > 1){
-				normalizedEnergy(input, size);
+				
 				//pop = rand()%(size-1);
-				pop = rand()%100+1;
+				pop = rand()%100 + 1;
+				float sum_acc = AFLFastSchedule(input, size);
 				min_idx = size-1;
 				float sum_eng = 0.0;
 				for(int j = 0; j < size ; j++){
-					sum_eng += input[j].energy;
+					sum_eng += input[j].energy*input[j].energy/sum_acc;
 					if(sum_eng * 100 < pop){
 						min_idx = j;
+						
 						break;
 					}
 				}
@@ -59,8 +61,8 @@ greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, i
 		if(i == 0){
 			run_cov = getCoverage(run_cov, filename, tmp_str);
 			strcpy(input[size].input, tmp_str);
-			input[size].value =  run_cov.cov_line.value;
-			input[size++].energy = energy;
+			input[size].value = (float)run_cov.cov_line.value;
+			input[size++].acc = run_cov.cov_line.acc;
 			
 			printf("%dcoverage: %2.2f\n", i,run_cov.coverage * 100);
 		}
@@ -71,7 +73,7 @@ greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, i
 			cmpCov = getCmpCoverage(run_cov, tmp_cov);
 			if(cmpCov.onlyb.idx != 0){
 				strcpy(input[size].input, tmp_str);
-				input[size].energy = energy;
+				input[size].acc = (float)tmp_cov.cov_line.acc - input[size-1].acc;
 				input[size++].value = tmp_cov.cov_line.value;
 				run_cov = tmp_cov;
 				printf("%dcoverage: %2.2f\n", i,run_cov.coverage * 100);
@@ -85,18 +87,11 @@ greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, i
 	return gr;
 }
 
-Input* normalizedEnergy(Input* input, int size){
-	//printf("norm\n");
-	float sum_energy = 0.0;
-	for(int i = 0; i < size; i++){
-		sum_energy += input[i].energy;
-	}
-	
-	for(int i = 0; i < size; i++){
-		input[i].energy = input[i].energy / sum_energy;	
-	}
+float AFLFastSchedule(Input* input, int size){
+        float sum = 0.0;                                                                                        for(int i = 0; i < size; i++)
+                sum += input[i].acc * input[i].acc;
 
-	return input;
+        return sum;
 }
 
 LineCode readfile(char* filename){
@@ -286,6 +281,7 @@ CoverLine getCoverLine(LineCode cov_code){
         int lineIdx = 0;
         covline.non_cover_line = 0;
         char orgcov[BUFF_SIZE];
+	covline.acc = 0;
         for(int i = 0 ; i < cov_code.line ; i++){
                 if(strlen(cov_code.code[i]) != 0)strcpy(orgcov, cov_code.code[i]);
                 char* ptr;
@@ -294,6 +290,7 @@ CoverLine getCoverLine(LineCode cov_code){
                         if((strcmp(ptr, "        -") == 0))
                                 covline.non_cover_line++;
                         else{
+				covline.acc += atoi(ptr);
                                 ptr = strtok(NULL, ":");
                                 if(ptr !=NULL){
                                         covLine[lineIdx++] = atoi(ptr);

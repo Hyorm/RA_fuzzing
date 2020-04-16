@@ -16,6 +16,7 @@ typedef struct _CoverLine{
         int idx;
         int non_cover_line;
 	int value;
+	int acc;
 
 }CoverLine;
 
@@ -31,6 +32,7 @@ typedef struct _Input{
 	char* input;
 	int value;
 	float energy;
+	float acc;
 
 }Input;
 
@@ -60,7 +62,8 @@ typedef struct _greyboxRunner{
 
 struct _greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, int seed_size, int min_mtt, int max_mtt, int flag);
 
-Input* normalizedEnergy(Input* input, int size);
+float AFLFastSchedule(Input* input, int size);
+
 LineCode readfile(char* filename);
 Coverage getCoverage(Coverage cov, char* filename, char* input);
 CmpCoverage getCmpCoverage(Coverage a, Coverage b);

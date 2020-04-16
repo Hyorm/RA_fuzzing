@@ -11,9 +11,9 @@
 #include"mutationRunner.h"
 #include"mutationFuzzer.h"
 
-greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, int seed_size, int min_mtt, int max_mtt, int flag){
+MutationRunner run_MutationRunner(MutationRunner gr, char* filename, char** seed, int seed_size, int min_mtt, int max_mtt, int flag){
 
-	GreyboxFuzzer gf = {fuzz_GreyboxFuzzer};
+	MutationFuzzer gf = {fuzz_MutationFuzzer};
 
 	struct timeval now;
 

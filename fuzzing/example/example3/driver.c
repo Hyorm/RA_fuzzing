@@ -13,7 +13,7 @@
 
 int main(int argc, char** argv){
 	Population pop;
-	greyboxRunner gr = {pop, run_greyboxRunner};
+	MutationRunner gr = {pop, run_MutationRunner};
 	
 	char** seed_input= (char**)malloc(sizeof(char*)*1);
         seed_input[0]= "http://www.google.com/search?q=fuzzing";	

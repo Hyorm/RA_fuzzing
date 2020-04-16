@@ -1,15 +1,15 @@
-#ifndef __GREYBOXFUZZER_H__
-#define __GREYBOXFUZZER_H__
+#ifndef __MUTATIONFUZZER_H__
+#define __MUTATIONFUZZER_H__
 
 #define BUFF_SIZE 256
 
-typedef struct _GreyboxFuzzer{
+typedef struct _MutationFuzzer{
 
         char* (*fuzz)(char*);
 	
-}GreyboxFuzzer;
+}MutationFuzzer;
 
-char* fuzz_GreyboxFuzzer( char* str);
+char* fuzz_MutationFuzzer( char* str);
 
 char* mutate( char* seed);
 char* delete_random_character( char* seed);

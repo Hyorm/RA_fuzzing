@@ -11,7 +11,7 @@
 
 #include"mutationFuzzer.h"
 
-char* fuzz_GreyboxFuzzer(char* str){
+char* fuzz_MutationFuzzer(char* str){
 	if(strlen(str)==0){
 		printf("kill\n");
 		exit(1);

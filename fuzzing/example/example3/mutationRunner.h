@@ -50,15 +50,15 @@ typedef struct _CmpCoverage{
 
 }CmpCoverage;
 
-typedef struct _greyboxRunner{
+typedef struct _MutationRunner{
 
 	Population pop;
 	
-	struct _greyboxRunner (*run)(struct _greyboxRunner, char*, char**, int, int, int, int);	
+	struct _MutationRunner (*run)(struct _MutationRunner, char*, char**, int, int, int, int);	
 
-}greyboxRunner;
+}MutationRunner;
 
-struct _greyboxRunner run_greyboxRunner(greyboxRunner gr, char* filename, char** seed, int seed_size, int min_mtt, int max_mtt, int flag);
+struct _MutationRunner run_MutationRunner(MutationRunner gr, char* filename, char** seed, int seed_size, int min_mtt, int max_mtt, int flag);
 
 LineCode readfile(char* filename);
 Coverage getCoverage(Coverage cov, char* filename, char* input);

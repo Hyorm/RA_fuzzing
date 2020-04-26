@@ -90,7 +90,7 @@ char* delete_random_character(char* seed){
 
         for(int i = pos ; i < strlen(seed)-1 ; i++)
                 out[i] = seed[i+1];
-
+	out[strlen(seed)-1] = '\0';
         return out;
 
 }
@@ -116,7 +116,7 @@ char* insert_random_character(char* seed){
 
         for(int i = pos+1; i < strlen(seed)+1 ; i++)
                 out[i] = seed[i-1];
-
+	out[strlen(seed)+1] = '\0';
         return out;
 
 }
@@ -148,7 +148,7 @@ char* flip_random_character(char* seed){
 
         for(int i = pos + 1 ; i < strlen(seed)+1 ; i++)
                 out[i] = seed[i-1];
-
+	out[strlen(seed)+1] = '\0';
         return out;
 
 }

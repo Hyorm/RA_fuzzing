@@ -35,14 +35,14 @@ char* mutate(char* seed){
 
                 case 1 :
                         rst = delete_random_character(seed);
-                        //printf("delete %s\n", rst);
+                        printf("delete %s\n", rst);
                         break;
                 case 2 :                                                                                               rst = insert_random_character(seed);
-                        //printf("insert %s\n", rst);
+                        printf("insert %s\n", rst);
                         break;
                 case 3 :
                         rst = flip_random_character(seed);
-                        //printf("flip %s\n", rst);
+                        printf("flip %s\n", rst);
                         break;
                 default:
                         break;
@@ -82,15 +82,15 @@ char* delete_random_character(char* seed){
 
         pos = rand()%(strlen(seed)-1);
 
-        char* out = malloc(sizeof(char)*strlen(seed));
-
+        char* out = malloc(sizeof(char)*(strlen(seed)));
         for(int i = 0; i < pos ; i++)
                 out[i] = seed[i];
 
         for(int i = pos ; i < strlen(seed)-1 ; i++)
                 out[i] = seed[i+1];
-
-        return out;
+	out[strlen(seed)-1] = '\0';
+        
+	return out;
 
 }
 
@@ -105,8 +105,7 @@ char* insert_random_character(char* seed){
 
         pos = rand()%(strlen(seed));
   
-	char* out = malloc(sizeof(char)*strlen(seed)+1);
-
+	char* out = malloc(sizeof(char)*(strlen(seed)+1));
         for(int i = 0; i < pos ; i++)
                 out[i] = seed[i];
 
@@ -114,7 +113,7 @@ char* insert_random_character(char* seed){
 
         for(int i = pos+1; i < strlen(seed)+1 ; i++)
                 out[i] = seed[i-1];
-
+	out[strlen(seed)+1] = '\0';
         return out;
 
 }
@@ -136,8 +135,7 @@ char* flip_random_character(char* seed){
 
         c = seed[pos];
 
-        char* out = malloc(sizeof(char)*strlen(seed));
-
+        char* out = malloc(sizeof(char)*(strlen(seed)));
         for(int i = 0; i < pos ; i++)
                 out[i] = seed[i];
 
@@ -147,6 +145,8 @@ char* flip_random_character(char* seed){
         for(int i = pos + 1 ; i < strlen(seed)+1 ; i++)
                 out[i] = seed[i-1];
 
-        return out;
+	out[strlen(seed)+1] = '\0';
+
+	return out;
 
 }

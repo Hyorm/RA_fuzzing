@@ -1,5 +1,5 @@
 # RA_fuzzing(20-1 Research Internship)
-
+fuzzing algorithm, C with fuzzing book
 ## Summary
 I performed the task of changing the **python code** of the **fuzzing book(<https://www.fuzzingbook.org/>)** to the **C language**.
 This process allows me to learn the fuzzing algorithm.

@@ -24,6 +24,8 @@ The comparison data will be uploaded later.
   - Can't attach Gcov -5
 ### Compare Graph (draft, some results per module)
 This project has not been terminated. Consequently, results and information cannot be fully disclosed.<br>
+- Orenge: Angora
+- Blue: AFL
 <p align="center"><img width="514" alt="image" src="https://user-images.githubusercontent.com/28642467/120481152-c9c7a500-c3ea-11eb-81bf-9b169e6c77be.png"></p>
 <p align="center">Figure 1. Guetzli jpeg_data_reader</p>
 

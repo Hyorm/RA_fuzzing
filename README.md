@@ -5,7 +5,7 @@ fuzzing algorithm, C with fuzzing book<br>
 I performed the task of changing the **python code** of the **[fuzzing book](<https://www.fuzzingbook.org/>)** to the **C language**.
 This process allows me to learn the fuzzing algorithm.
 The code of the fuzzing book is implemented as an object-oriented algorithm, so I overcomed the limitations of the c language using the structure of the c language.
-After completing this process, I conducted a fuzzing test using [Google/fuzzer-test-suite](https://github.com/google/fuzzer-test-suite) with anora, AFL, and libfuzzer and performed a comparative analysis of the differences and performance of each fuzzer.
+After completing this process, I conducted a fuzzing test using [Google/fuzzer-test-suite](https://github.com/google/fuzzer-test-suite) with [Anora](https://github.com/AngoraFuzzer/Angora), [AFL](https://github.com/google/AFL), and [LibFuzzer](https://llvm.org/docs/LibFuzzer.html) and performed a comparative analysis of the differences and performance of each fuzzer.
 The comparison data will be uploaded later.
 
 ## Comparison(draft)🔧

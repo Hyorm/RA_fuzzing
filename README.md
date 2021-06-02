@@ -1,5 +1,7 @@
-# RA_fuzzing(20-1 Research Internship)
+# RA_fuzzing
 fuzzing algorithm, C with fuzzing book<br>
+- 20-1 Research Internship
+- Personal Project with [Profesor](https://github.com/shinhong)
 
 ## Summary
 I performed the task of changing the **python code** of the **[fuzzing book](<https://www.fuzzingbook.org/>)** to the **C language**.

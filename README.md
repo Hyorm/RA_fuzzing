@@ -10,18 +10,18 @@ The comparison data will be uploaded later.
 
 ## Comparison(draft)🔧
 ### Target Program
-guetzli
-libarchive
-lcms
-libjpeg-turbo
-Harfbuzz
+- guetzli
+- libarchive
+- lcms
+- libjpeg-turbo
+- Harfbuzz
 #### Reason
-Google/fuzzer-test-suite : 24
-Condition
-  Seeds - 12
-  Not too big to angora dry run - 11
-  the libfuzzing engine not too tightly attached to the target program – 8
-  Gcov -5
+- Google/fuzzer-test-suite : 24
+- Condition
+  - Seeds - 12
+  - Not too big to angora dry run - 11
+  - the libfuzzing engine not too tightly attached to the target program – 8
+  - Can't attach Gcov -5
 ### Compare Graph (draft, some results per module)
 <p align="center"><img width="514" alt="image" src="https://user-images.githubusercontent.com/28642467/120481152-c9c7a500-c3ea-11eb-81bf-9b169e6c77be.png"></p>
 <p align="center">Figure 1. Guetzli jpeg_data_reader</p>

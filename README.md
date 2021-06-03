@@ -23,7 +23,7 @@ The comparison data will be uploaded later.
   - Seeds - 12
   - Not too big to angora dry run - 11
   - the libfuzzing engine not too tightly attached to the target program – 8
-  - Can't attach Gcov -5
+  - Gcov must be attachable -5
 ### Graph (draft, some results per module)
 This project has not been terminated. Consequently, results and information cannot be fully disclosed.<br>
 - Orenge: Angora

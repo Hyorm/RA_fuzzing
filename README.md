@@ -24,7 +24,7 @@ The comparison data will be uploaded later.
   - Not too big to angora dry run - 11
   - the libfuzzing engine not too tightly attached to the target program – 8
   - Can't attach Gcov -5
-### Compare Graph (draft, some results per module)
+### Graph (draft, some results per module)
 This project has not been terminated. Consequently, results and information cannot be fully disclosed.<br>
 - Orenge: Angora
 - Blue: AFL
